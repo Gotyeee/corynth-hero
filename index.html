@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corynth Labs — Research-Grade Peptides</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header__container">
+            <div class="header__logo">
+                <span class="header__logo-text">Corynth Labs</span>
+            </div>
+            <nav class="header__nav">
+                <ul class="header__nav-list">
+                    <li class="header__nav-item"><a href="#" class="header__nav-link">Science</a></li>
+                    <li class="header__nav-item"><a href="#" class="header__nav-link">Products</a></li>
+                    <li class="header__nav-item"><a href="#" class="header__nav-link">About</a></li>
+                    <li class="header__nav-item"><a href="#" class="header__nav-link">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="header__auth">
+                <a href="#" class="header__auth-link">Log In / Sign Up</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <section class="hero">
+            <!-- Full-bleed video background -->
+            <video class="hero__media" autoplay loop muted playsinline poster="vial-hero.png">
+                <source src="vial-hero.mp4" type="video/mp4">
+            </video>
+
+            <!-- Gradient overlay darkens the left side so text stays readable -->
+            <div class="hero__overlay"></div>
+
+            <!-- Text content sits on top. Outer .hero__content matches the header's container so text lines up with the logo. Inner wrapper keeps the text block narrow. -->
+            <div class="hero__content">
+                <div class="hero__content-inner">
+                    <h1 class="hero__title">Research-Grade Peptides.<br>Verified Purity.</h1>
+                    <p class="hero__description">Sourced for purity. Documented by batch. Built for serious researchers.</p>
+                    <div class="hero__actions">
+                        <button class="hero__button hero__button--primary">Explore Catalog</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

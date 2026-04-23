@@ -514,6 +514,26 @@
         </footer>
     </aside>
 
+    <!-- Catalog horizontal scroller — prev/next paging -->
+    <script>
+        (function () {
+            document.querySelectorAll('.products__row').forEach(function (row) {
+                var nav = row.querySelector('.products__nav');
+                var products = row.parentElement.querySelector('.products');
+                if (!nav || !products) return;
+                var btns = nav.querySelectorAll('button');
+                if (btns.length < 2) return;
+                function page(dir) {
+                    var card = products.querySelector('.product-card');
+                    if (!card) return;
+                    var step = card.getBoundingClientRect().width + 12;
+                    products.scrollBy({ left: step * 2 * dir, behavior: 'smooth' });
+                }
+                btns[0].addEventListener('click', function () { page(-1); });
+                btns[1].addEventListener('click', function () { page(1); });
+            });
+        })();
+    </script>
     <script>
         (function () {
             var toggle = document.querySelector('[data-mobile-nav-toggle]');

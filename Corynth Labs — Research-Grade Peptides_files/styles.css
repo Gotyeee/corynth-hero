@@ -1454,8 +1454,9 @@ body.nav-locked { overflow: hidden; }
     .section--lifted { margin-top: -32px; }
     .section-title { font-size: clamp(1.6rem, 6vw, 2rem); }
 
-    /* Compare — stack, label rows clearly */
-    .compare-wrap { padding: 28px 18px 20px; }
+    /* Compare — stack, label rows clearly. Drop inline icons (redundant);
+       the row uses a clear two-column "label : value" structure. */
+    .compare-wrap { padding: 24px 18px 20px; }
     .compare__head { display: none; }
     .compare__row {
         grid-template-columns: 1fr;
@@ -1463,37 +1464,68 @@ body.nav-locked { overflow: hidden; }
         padding: 18px 0;
     }
     .compare__metric {
-        font-size: 11px;
-        color: var(--fg-muted);
+        font-size: 13px;
+        color: var(--fg);
         text-transform: uppercase;
         letter-spacing: 0.14em;
         font-family: var(--font-mono);
+        font-weight: 600;
+        margin-bottom: 6px;
     }
-    .compare__cell { font-size: 14px; }
-    .compare__cell--us::before {
-        content: 'Corynth Labs · ';
-        color: var(--fg-muted);
+    .compare__cell {
+        display: grid;
+        grid-template-columns: 84px 1fr;
+        align-items: start;
+        gap: 12px;
+        font-size: 14px;
+        line-height: 1.45;
+        padding: 4px 0;
+    }
+    .compare__cell .compare__icon { display: none; }
+    .compare__cell--us { color: var(--fg); }
+    .compare__cell--them { color: var(--fg-muted); }
+    .compare__cell::before {
         font-family: var(--font-mono);
         font-size: 10.5px;
-        letter-spacing: 0.12em;
+        letter-spacing: 0.14em;
         text-transform: uppercase;
-        margin-right: 6px;
-    }
-    .compare__cell--them::before {
-        content: 'Typical Supplier · ';
         color: var(--fg-muted);
-        font-family: var(--font-mono);
-        font-size: 10.5px;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        margin-right: 6px;
+        padding-top: 3px;
     }
+    .compare__cell--us::before { content: 'Corynth'; color: var(--fg-secondary); }
+    .compare__cell--them::before { content: 'Typical'; }
 
-    /* Products — single column, larger tap targets, hide carousel arrows */
+    /* Products — horizontal snap scroller showing 2 cards; arrows page through */
     .products,
-    .products--six { grid-template-columns: 1fr; gap: 16px; }
-    .products__nav { display: none; }
-    .products__row { margin-bottom: 20px; }
+    .products--six {
+        display: flex;
+        grid-template-columns: none;
+        gap: 12px;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        scroll-padding-left: var(--container-pad);
+        padding-bottom: 4px;
+        margin: 0 calc(-1 * var(--container-pad));
+        padding-left: var(--container-pad);
+        padding-right: var(--container-pad);
+    }
+    .products::-webkit-scrollbar,
+    .products--six::-webkit-scrollbar { display: none; }
+    .products .product-card,
+    .products--six .product-card {
+        flex: 0 0 calc((100% - var(--container-pad) * 2 - 12px) / 2);
+        min-width: 0;
+        scroll-snap-align: start;
+    }
+    .products__nav { display: inline-flex; gap: 8px; }
+    .products__nav button {
+        width: 38px;
+        height: 38px;
+        border-radius: 999px;
+    }
+    .products__row { margin-bottom: 16px; align-items: center; }
     /* Touch devices have no hover — make Add always visible */
     .product-card__add {
         opacity: 1;
@@ -1588,6 +1620,35 @@ body.nav-locked { overflow: hidden; }
     .hero__title { font-size: 1.85rem; }
     .pdp-spec,
     .pdp-spec--five { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+   TOUCH DEVICES — disable hover-state side effects so iOS Safari
+   doesn't require a double-tap to activate buttons/links.
+   ============================================================ */
+@media (hover: none) {
+    .icon-btn:hover { border-color: var(--border); color: var(--fg-secondary); }
+    .product-card:hover { transform: none; border-color: var(--border); }
+    .product-card__add { opacity: 1; transform: none; }
+    .product-card__add:hover { background: var(--c-silver); }
+    .cart-drawer__close:hover {
+        color: var(--fg-muted);
+        border-color: var(--c-line);
+        background: transparent;
+    }
+    .cart-rail:hover { background: transparent; }
+    .pdp-pay-rail:hover { background: var(--c-ink-2); border-color: var(--border); }
+    .pdp-option:hover { border-color: var(--border); }
+    .pdp-cta--primary:hover { background: var(--fg); transform: none; }
+    .nav a:hover { color: var(--fg-secondary); }
+    .nav a:hover::after { opacity: 0; }
+    .products__nav button:hover {
+        border-color: var(--border);
+        color: var(--fg-secondary);
+    }
+    .pdp-crumbs__nav button:hover { border-color: var(--border); color: var(--fg-secondary); }
+    .pdp-thumb:hover { border-color: var(--border); }
+    .cart-checkout:hover:not(:disabled) { background: #FFFFFF; }
 }
 
 /* ============================================================

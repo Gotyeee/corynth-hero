@@ -1433,20 +1433,66 @@ body.nav-locked { overflow: hidden; }
     .brand { font-size: 14px; gap: 8px; }
     .brand__mark { width: 16px; height: 16px; }
 
-    /* Hero — bring text up, allow shorter screen, stack actions */
-    .hero { height: auto; min-height: 0; padding: 120px 0 80px; }
-    .hero__content { padding: 0 var(--container-pad); }
+    /* Hero — give the vial real estate, keep text readable.
+       Layout: vial fills the upper portion, text sits below it. */
+    .hero {
+        height: auto;
+        min-height: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+    }
+    /* Vial stage: top half, video centered, soft fade into the text area */
+    .hero__media {
+        position: relative;
+        inset: auto;
+        width: 100%;
+        height: 56vh;
+        min-height: 360px;
+        max-height: 520px;
+        object-fit: cover;
+        object-position: 50% 45%;
+        display: block;
+    }
+    /* Overlay: top dim for header legibility + bottom fade into the text block */
+    .hero__overlay {
+        inset: 0 0 auto 0;
+        height: 56vh;
+        min-height: 360px;
+        max-height: 520px;
+        background:
+            linear-gradient(180deg,
+                rgba(0,0,0,0.55) 0%,
+                rgba(0,0,0,0.15) 30%,
+                rgba(0,0,0,0) 55%,
+                rgba(0,0,0,0.65) 88%,
+                var(--bg) 100%);
+    }
+    /* Text block: solid bg below the vial, comfortable spacing */
+    .hero__content {
+        position: relative;
+        padding: 28px var(--container-pad) 56px;
+        margin-top: -1px;
+        background: var(--bg);
+        text-align: left;
+    }
     .hero__title {
         font-size: clamp(2rem, 9vw, 2.6rem);
         line-height: 1.05;
         letter-spacing: -0.02em;
+        margin-top: 0;
     }
     .hero__title br { display: none; }
-    .hero__desc { font-size: 15px; line-height: 1.5; max-width: none; }
+    .hero__desc {
+        font-size: 15px;
+        line-height: 1.5;
+        max-width: none;
+        margin-bottom: 24px;
+    }
     .hero__actions {
         flex-direction: column;
         align-items: stretch;
-        gap: 12px;
+        gap: 10px;
     }
     .hero__actions .btn { width: 100%; justify-content: center; text-align: center; }
 

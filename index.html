@@ -9,6 +9,18 @@
 </head>
 <body>
 
+    <!-- ============ MOBILE NAV ============ -->
+    <div class="mobile-nav-backdrop" id="mobileNavBackdrop" aria-hidden="true"></div>
+    <aside class="mobile-nav" id="mobileNav" aria-hidden="true">
+        <nav aria-label="Mobile primary">
+            <a href="#shop">Shop</a>
+            <a href="#about">About</a>
+            <a href="#coas">COAs</a>
+            <a href="#faq">FAQ</a>
+            <a href="#contact">Contact</a>
+        </nav>
+    </aside>
+
     <!-- ============ HEADER ============ -->
     <header class="site-header scrolled" id="siteHeader">
         <div class="container site-header__row">
@@ -35,7 +47,10 @@
                 <a href="file:///C:/Users/inher/Desktop/Claude%20design/index.html#contact">Contact</a>
             </nav>
             <div class="site-header__auth">
-                <button class="icon-btn" aria-label="Search">
+                <button class="icon-btn icon-btn--menu" type="button" aria-label="Menu" aria-expanded="false" aria-controls="mobileNav" data-mobile-nav-toggle>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 6h18"></path><path d="M3 12h18"></path><path d="M3 18h18"></path></svg>
+                </button>
+                <button class="icon-btn icon-btn--search" aria-label="Search">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
                 </button>
                 <button class="icon-btn" aria-label="Account">
@@ -53,9 +68,6 @@
 
     <!-- ============ HERO ============ -->
     <section class="hero">
-        <video class="hero__media" autoplay="" loop="" muted="" playsinline="" poster="vial-hero.png">
-            <source src="vial-hero.mp4" type="video/mp4">
-        </video>
         <div class="hero__overlay"></div>
         <div class="hero__content">
             <h1 class="hero__title">Research-Grade Peptides.<br>Verified Purity.</h1>
@@ -407,6 +419,40 @@
             };
             window.addEventListener('scroll', onScroll, { passive: true });
             onScroll();
+        })();
+    </script>
+
+    <!-- Mobile nav toggle -->
+    <script>
+        (function () {
+            var toggle = document.querySelector('[data-mobile-nav-toggle]');
+            var nav = document.getElementById('mobileNav');
+            var back = document.getElementById('mobileNavBackdrop');
+            if (!toggle || !nav || !back) return;
+            function open() {
+                nav.classList.add('mobile-nav--on');
+                back.classList.add('mobile-nav-backdrop--on');
+                nav.setAttribute('aria-hidden', 'false');
+                toggle.setAttribute('aria-expanded', 'true');
+                document.body.classList.add('nav-locked');
+            }
+            function close() {
+                nav.classList.remove('mobile-nav--on');
+                back.classList.remove('mobile-nav-backdrop--on');
+                nav.setAttribute('aria-hidden', 'true');
+                toggle.setAttribute('aria-expanded', 'false');
+                document.body.classList.remove('nav-locked');
+            }
+            toggle.addEventListener('click', function () {
+                nav.classList.contains('mobile-nav--on') ? close() : open();
+            });
+            back.addEventListener('click', close);
+            nav.addEventListener('click', function (e) {
+                if (e.target.tagName === 'A') close();
+            });
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && nav.classList.contains('mobile-nav--on')) close();
+            });
         })();
     </script>
 

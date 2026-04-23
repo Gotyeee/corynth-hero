@@ -704,49 +704,48 @@ button { font-family: inherit; cursor: pointer; }
 
     .nav { display: none; }
 
-    /* Hero — full-bleed video like desktop, text overlays the lower third,
-       bottom fades into the next section (no visible break). */
+    /* Hero — full-bleed video like desktop, text overlays the LEFT side
+       on top of the dark area of the video (matches desktop behavior). */
     .hero {
         height: 100vh;
         min-height: 640px;
         max-height: 860px;
     }
     .hero__media {
-        object-position: 50% 32%;
+        object-position: 70% 50%;
     }
     .hero__overlay {
-        background: linear-gradient(180deg,
-            rgba(0,0,0,0.45) 0%,
-            rgba(0,0,0,0.08) 30%,
-            rgba(0,0,0,0.15) 55%,
-            rgba(0,0,0,0.75) 82%,
-            rgba(0,0,0,0.95) 94%,
-            var(--bg) 100%);
+        background: linear-gradient(
+            135deg,
+            rgba(0,0,0,0.95) 0%,
+            rgba(0,0,0,0.85) 25%,
+            rgba(0,0,0,0.45) 55%,
+            rgba(0,0,0,0) 90%
+        );
     }
     .hero__content {
-        position: absolute;
-        inset: auto 0 0 0;
-        padding: 32px var(--container-pad) 44px;
+        padding: 120px var(--container-pad) 0;
         text-align: left;
     }
     .hero__title {
-        font-size: clamp(2rem, 9vw, 2.6rem);
+        font-size: clamp(2.2rem, 10vw, 3rem);
         line-height: 1.05;
         max-width: none;
+        margin-bottom: 18px;
     }
-    .hero__title br { display: none; }
+    .hero__title br { display: block; }
     .hero__desc {
         font-size: 15px;
         line-height: 1.5;
-        max-width: none;
-        margin-bottom: 24px;
+        max-width: 320px;
+        margin-bottom: 28px;
     }
     .hero__actions {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
     }
-    .hero__actions .btn { width: 100%; justify-content: center; text-align: center; }
 
     .section { padding: 64px 0; }
 

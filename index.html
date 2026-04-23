@@ -1,52 +1,332 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
+<!-- saved from url=(0057)file:///C:/Users/inher/Desktop/Claude%20design/index.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Corynth Labs — Research-Grade Peptides</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="./Corynth Labs — Research-Grade Peptides_files/colors_and_type.css">
+    <link rel="stylesheet" href="./Corynth Labs — Research-Grade Peptides_files/styles.css">
 </head>
 <body>
-    <header class="header">
-        <div class="header__container">
-            <div class="header__logo">
-                <span class="header__logo-text">Corynth Labs</span>
-            </div>
-            <nav class="header__nav">
-                <ul class="header__nav-list">
-                    <li class="header__nav-item"><a href="#" class="header__nav-link">Science</a></li>
-                    <li class="header__nav-item"><a href="#" class="header__nav-link">Products</a></li>
-                    <li class="header__nav-item"><a href="#" class="header__nav-link">About</a></li>
-                    <li class="header__nav-item"><a href="#" class="header__nav-link">Contact</a></li>
-                </ul>
+
+    <!-- ============ HEADER ============ -->
+    <header class="site-header scrolled" id="siteHeader">
+        <div class="container site-header__row">
+            <a class="brand" href="file:///C:/Users/inher/Desktop/Claude%20design/index.html#">
+                <svg class="brand__mark" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <defs>
+                        <lineargradient id="corynthSilver" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#F4F5F9"></stop>
+                            <stop offset="48%" stop-color="#C7CAD4"></stop>
+                            <stop offset="52%" stop-color="#8A8F9E"></stop>
+                            <stop offset="100%" stop-color="#E2E4EC"></stop>
+                        </lineargradient>
+                    </defs>
+                    <circle cx="12" cy="12" r="10" stroke="#6B7099" stroke-width="1" opacity="0.5"></circle>
+                    <circle cx="12" cy="12" r="5" fill="url(#corynthSilver)"></circle>
+                </svg>
+                <span>Corynth Labs</span>
+            </a>
+            <nav class="nav" aria-label="Primary">
+                <a href="file:///C:/Users/inher/Desktop/Claude%20design/index.html#shop">Shop</a>
+                <a href="file:///C:/Users/inher/Desktop/Claude%20design/index.html#about">About</a>
+                <a href="file:///C:/Users/inher/Desktop/Claude%20design/index.html#coas">COAs</a>
+                <a href="file:///C:/Users/inher/Desktop/Claude%20design/index.html#faq">FAQ</a>
+                <a href="file:///C:/Users/inher/Desktop/Claude%20design/index.html#contact">Contact</a>
             </nav>
-            <div class="header__auth">
-                <a href="#" class="header__auth-link">Log In / Sign Up</a>
+            <div class="site-header__auth">
+                <button class="icon-btn" aria-label="Search">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
+                </button>
+                <button class="icon-btn" aria-label="Account">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                </button>
+                <button class="icon-btn" aria-label="Cart">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                </button>
             </div>
         </div>
     </header>
 
-    <main class="main">
-        <section class="hero">
-            <!-- Full-bleed video background -->
-            <video class="hero__media" autoplay loop muted playsinline poster="vial-hero.png">
-                <source src="vial-hero.mp4" type="video/mp4">
-            </video>
+    <main>
 
-            <!-- Gradient overlay darkens the left side so text stays readable -->
-            <div class="hero__overlay"></div>
+    <!-- ============ HERO ============ -->
+    <section class="hero">
+        <video class="hero__media" autoplay="" loop="" muted="" playsinline="" poster="vial-hero.png">
+            <source src="vial-hero.mp4" type="video/mp4">
+        </video>
+        <div class="hero__overlay"></div>
+        <div class="hero__content">
+            <h1 class="hero__title">Research-Grade Peptides.<br>Verified Purity.</h1>
+            <p class="hero__desc">Sourced for purity. Documented by batch. Built for serious researchers.</p>
+            <div class="hero__actions">
+                <button class="btn btn--primary-pill">Explore Catalog</button>
+                <button class="btn btn--text">View public COAs →</button>
+            </div>
+        </div>
+    </section>
 
-            <!-- Text content sits on top. Outer .hero__content matches the header's container so text lines up with the logo. Inner wrapper keeps the text block narrow. -->
-            <div class="hero__content">
-                <div class="hero__content-inner">
-                    <h1 class="hero__title">Research-Grade Peptides.<br>Verified Purity.</h1>
-                    <p class="hero__description">Sourced for purity. Documented by batch. Built for serious researchers.</p>
-                    <div class="hero__actions">
-                        <button class="hero__button hero__button--primary">Explore Catalog</button>
+    <!-- ============ PRODUCTS ============ -->
+    <section class="section" id="shop">
+        <div class="container">
+            <div class="products__row">
+                <div>
+                    <h2 class="section-title">Research catalog.</h2>
+                </div>
+                <div class="products__nav">
+                    <button aria-label="Previous">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg>
+                    </button>
+                    <button aria-label="Next">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="products">
+                <article class="product-card">
+                    <div class="product-card__image">
+                        <span class="product-card__image-code">GLP-3 · 10MG</span>
+                        <img class="product-card__image-vial" src="./Corynth Labs — Research-Grade Peptides_files/vial-glp3-10mg-small.png" alt="Corynth Labs GLP-3 Retatrutide 10mg research vial">
+                    </div>
+                    <div class="product-card__foot">
+                        <div class="product-card__name-row">
+                            <span class="product-card__dot"></span>
+                            <span class="product-card__name">Retatrutide</span>
+                        </div>
+                        <span class="product-card__price">$289.00</span>
+                    </div>
+                </article>
+
+                <article class="product-card">
+                    <div class="product-card__image">
+                        <span class="product-card__image-code">GLP-3 · 20MG</span>
+                        <img class="product-card__image-vial" src="./Corynth Labs — Research-Grade Peptides_files/vial-glp3-20mg-small.png" alt="Corynth Labs GLP-3 Retatrutide 20mg research vial">
+                    </div>
+                    <div class="product-card__foot">
+                        <div class="product-card__name-row">
+                            <span class="product-card__dot"></span>
+                            <span class="product-card__name">Retatrutide</span>
+                        </div>
+                        <span class="product-card__price">$149.00</span>
+                    </div>
+                </article>
+
+                <article class="product-card">
+                    <div class="product-card__image">
+                        <span class="product-card__image-code">GHK-CU · 50MG</span>
+                        <img class="product-card__image-vial" src="./Corynth Labs — Research-Grade Peptides_files/vial-ghkcu-50mg-small.png" alt="Corynth Labs GHK-Cu 50mg research vial">
+                    </div>
+                    <div class="product-card__foot">
+                        <div class="product-card__name-row">
+                            <span class="product-card__dot"></span>
+                            <span class="product-card__name">GHK-Cu</span>
+                        </div>
+                        <span class="product-card__price">$89.00</span>
+                    </div>
+                </article>
+
+                <article class="product-card">
+                    <div class="product-card__image">
+                        <span class="product-card__image-code">MOTS-C · 10MG</span>
+                        <img class="product-card__image-vial" src="./Corynth Labs — Research-Grade Peptides_files/vial-motsc-10mg-small.png" alt="Corynth Labs MOTS-c 10mg research vial">
+                    </div>
+                    <div class="product-card__foot">
+                        <div class="product-card__name-row">
+                            <span class="product-card__dot"></span>
+                            <span class="product-card__name">MOTS-c</span>
+                        </div>
+                        <span class="product-card__price">$179.00</span>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ COMPARISON ============ -->
+    <section class="section section--lifted">
+        <div class="container">
+            <div class="section-head section-head--center">
+                <h2 class="section-title section-title--center">How we compare</h2>
+                <p class="section-desc section-desc--center">Every batch verified. Every COA public.</p>
+            </div>
+
+            <div class="compare-wrap">
+                <div class="compare">
+                    <div class="compare__head">
+                        <span class="compare__col-label">Metric</span>
+                        <span class="compare__col-label compare__col-label--us">Corynth Labs</span>
+                        <span class="compare__col-label">Typical Research-Chem Supplier</span>
+                    </div>
+
+                    <div class="compare__row">
+                        <div class="compare__metric">Purity</div>
+                        <div class="compare__cell compare__cell--us">
+                            <span class="compare__icon">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+                            </span>
+                            <span>≥98%, third-party tested</span>
+                        </div>
+                        <div class="compare__cell compare__cell--them">
+                            <span class="compare__icon">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+                            </span>
+                            <span>Unverified, no documentation</span>
+                        </div>
+                    </div>
+
+                    <div class="compare__row">
+                        <div class="compare__metric">Testing</div>
+                        <div class="compare__cell compare__cell--us">
+                            <span class="compare__icon">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+                            </span>
+                            <span>Independent COA every batch</span>
+                        </div>
+                        <div class="compare__cell compare__cell--them">
+                            <span class="compare__icon">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+                            </span>
+                            <span>Self-reported or none</span>
+                        </div>
+                    </div>
+
+                    <div class="compare__row">
+                        <div class="compare__metric">Business</div>
+                        <div class="compare__cell compare__cell--us">
+                            <span class="compare__icon">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+                            </span>
+                            <span>Licensed LLC</span>
+                        </div>
+                        <div class="compare__cell compare__cell--them">
+                            <span class="compare__icon">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+                            </span>
+                            <span>No legal entity, anonymous</span>
+                        </div>
+                    </div>
+
+                    <div class="compare__row">
+                        <div class="compare__metric">Pricing</div>
+                        <div class="compare__cell compare__cell--us">
+                            <span class="compare__icon">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+                            </span>
+                            <span>Flat, no hidden fees</span>
+                        </div>
+                        <div class="compare__cell compare__cell--them">
+                            <span class="compare__icon">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+                            </span>
+                            <span>Variable, no receipts</span>
+                        </div>
+                    </div>
+
+                    <div class="compare__row">
+                        <div class="compare__metric">Payment</div>
+                        <div class="compare__cell compare__cell--us">
+                            <span class="compare__icon">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+                            </span>
+                            <span>Crypto (10% off), Zelle, Venmo, CashApp</span>
+                        </div>
+                        <div class="compare__cell compare__cell--them">
+                            <span class="compare__icon">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+                            </span>
+                            <span>Crypto-only Telegram DMs</span>
+                        </div>
+                    </div>
+
+                    <div class="compare__row">
+                        <div class="compare__metric">Support</div>
+                        <div class="compare__cell compare__cell--us">
+                            <span class="compare__icon">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+                            </span>
+                            <span>Email, phone, contact page</span>
+                        </div>
+                        <div class="compare__cell compare__cell--them">
+                            <span class="compare__icon">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+                            </span>
+                            <span>Telegram DMs, slow or no reply</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </section>
-    </main>
-</body>
-</html>
+        </div>
+    </section>
+
+    <!-- ============ TRUST STRIP ============ -->
+    <section>
+        <div class="container">
+            <div class="trust-strip">
+                <div class="trust-strip__item">
+                    <span class="trust-strip__label">PURITY</span>
+                    <span class="trust-strip__value">≥98%</span>
+                    <span class="trust-strip__sub">Third-party tested</span>
+                </div>
+                <div class="trust-strip__item">
+                    <span class="trust-strip__label">DOCUMENTATION</span>
+                    <span class="trust-strip__value">Public COAs</span>
+                    <span class="trust-strip__sub">Every batch, verifiable</span>
+                </div>
+                <div class="trust-strip__item">
+                    <span class="trust-strip__label">CONTACT</span>
+                    <span class="trust-strip__value">Direct support</span>
+                    <span class="trust-strip__sub">info@corynthlabs.com</span>
+                </div>
+                <div class="trust-strip__item">
+                    <span class="trust-strip__label">PAYMENT</span>
+                    <span class="trust-strip__value">10% off crypto</span>
+                    <span class="trust-strip__sub">Zelle · Venmo · CashApp</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+
+    <!-- ============ FOOTER ============ -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="site-footer__row">
+                <div class="site-footer__brand">CORYNTH LABS</div>
+                <div class="site-footer__disclaimer">For laboratory research use only · Not for human consumption</div>
+                <div class="site-footer__links">
+                    <a href="file:///C:/Users/inher/Desktop/Claude%20design/index.html#">Terms</a>
+                    <a href="file:///C:/Users/inher/Desktop/Claude%20design/index.html#">Privacy</a>
+                    <a href="file:///C:/Users/inher/Desktop/Claude%20design/index.html#">Refunds</a>
+                    <a href="file:///C:/Users/inher/Desktop/Claude%20design/index.html#">Contact</a>
+                </div>
+            </div>
+            <div class="site-footer__copy">
+                <span>© 2026 CORYNTH LABS LLC · OREGON</span>
+                <span>BATCH VERIFIED · SSL SECURE</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Sticky header scroll behavior -->
+    <script>
+        (function() {
+            var header = document.getElementById('siteHeader');
+            if (!header) return;
+            var onScroll = function() {
+                if (window.scrollY > 40) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            };
+            window.addEventListener('scroll', onScroll, { passive: true });
+            onScroll();
+        })();
+    </script>
+
+
+
+</body></html>

@@ -826,3 +826,28 @@ button { font-family: inherit; cursor: pointer; }
         flex-wrap: wrap;
     }
 }
+/* ============================================
+   GRAPHITE MIST HERO BACKDROP
+   Applied only to the top hero sections on
+   the About and FAQ pages.
+   ============================================ */
+
+   .about-hero,
+   .faq-hero {
+       position: relative;
+       background-image:
+           linear-gradient(180deg, rgba(0, 0, 0, 0.30) 0%, rgba(0, 0, 0, 0.60) 100%),
+           url('./corynth-graphite-mist-A-2560x1440.webp');
+       background-size: cover, cover;
+       background-position: center center, center center;
+       background-repeat: no-repeat, no-repeat;
+   }
+   
+   /* Mobile: slight crop adjustment so the densest
+      particle cluster doesn't dominate the headline */
+   @media (max-width: 768px) {
+       .about-hero,
+       .faq-hero {
+           background-position: 30% center, 30% center;
+       }
+   }

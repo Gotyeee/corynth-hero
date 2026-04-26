@@ -416,26 +416,26 @@ button { font-family: inherit; cursor: pointer; }
 }
 
 .product-card__image {
-    /* White backdrop inside the dark card chrome — the only white surface
-       in the system, used specifically for product-card thumbnails. */
-    background: #FFFFFF;
+    /* Light backdrop matching the vial PNG's studio gray (~#bdc0c5).
+       Same treatment as .pdp-media__stage so all vial surfaces look
+       uniform across PDP, homepage, and shop. */
+    background: #bdc0c5;
+    border: 1px solid rgba(255, 255, 255, 0.08);
     aspect-ratio: 1 / 1;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
     overflow: hidden;
+    box-sizing: border-box;
 }
 
 .product-card__image-vial {
-    /* 1500x1500 vial photo with a built-in pale-gray backdrop.
-       Contain + padding keeps the vial from getting cropped and
-       leaves a small white margin around the backdrop. */
+    /* Cover so the vial fills the card edge-to-edge with no visible
+       seam between photo backdrop and card. */
     width: 100%;
     height: 100%;
-    object-fit: contain;
-    padding: 16px;
-    box-sizing: border-box;
+    object-fit: cover;
     display: block;
 }
 
@@ -1984,8 +1984,8 @@ body.cart-locked .hero__media { visibility: hidden; }
 .cart-item__thumb {
     width: 64px;
     height: 64px;
-    background: var(--c-ink-3);
-    border: var(--hairline) solid var(--c-line);
+    background: #bdc0c5;
+    border: var(--hairline) solid rgba(255, 255, 255, 0.08);
     border-radius: var(--r-3);
     overflow: hidden;
     display: flex;
@@ -2593,18 +2593,19 @@ body.cart-locked .hero__media { visibility: hidden; }
 
 .shop-card__image {
     aspect-ratio: 1 / 1;
-    background: #EEF0F2;
+    background: #bdc0c5;
+    border: 1px solid rgba(255, 255, 255, 0.08);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 24px;
     box-sizing: border-box;
+    overflow: hidden;
 }
 
 .shop-card__vial {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     display: block;
 }
 
@@ -3536,7 +3537,7 @@ html, body {
     .faq-help__btn { padding: 14px 22px; min-height: 44px; }
 
     /* Shop grid spacing */
-    .shop-card__image { padding: 20px; }
+    .shop-card__image { padding: 0; }
     .shop-card__body { padding: 18px 18px 14px; gap: 8px; }
     .shop-card__name { font-size: 1.375rem; }
     .shop-card__foot { padding: 14px 18px; }

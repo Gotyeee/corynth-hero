@@ -418,10 +418,13 @@ button { font-family: inherit; cursor: pointer; }
 .product-card__image {
     /* Light backdrop matching the vial PNG's studio gray (~#bdc0c5).
        Same treatment as .pdp-media__stage so all vial surfaces look
-       uniform across PDP, homepage, and shop. */
+       uniform across PDP, homepage, and shop. padding-top reserves
+       space for the absolutely-positioned SKU header strip so it
+       doesn't overlap the vial photo. */
     background: #bdc0c5;
     border: 1px solid rgba(255, 255, 255, 0.08);
     aspect-ratio: 1 / 1;
+    padding-top: 28px;
     display: flex;
     align-items: center;
     justify-content: center;

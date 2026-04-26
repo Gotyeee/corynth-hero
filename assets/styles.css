@@ -3465,30 +3465,72 @@ body.cart-locked .hero__media { visibility: hidden; }
 }
 
 /* ============================================
-   GRAPHITE MIST HERO BACKDROP
-   Applied only to the top hero sections on
-   the About and FAQ pages.
+   PAGE HERO BACKDROPS
+   Per-page banner image, mirroring the COA hero
+   treatment with a dark gradient overlay so white
+   headlines remain legible against the artwork.
    ============================================ */
 
 .about-hero,
 .faq-hero,
 .shop-hero {
     position: relative;
-    background-image:
-        linear-gradient(180deg, rgba(0, 0, 0, 0.30) 0%, rgba(0, 0, 0, 0.60) 100%),
-        url('./corynth-graphite-mist-A-2560x1440.webp');
-    background-size: cover, cover;
-    background-position: center center, center center;
-    background-repeat: no-repeat, no-repeat;
+    background-color: var(--c-ink-0);
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    overflow: hidden;
 }
 
-/* Mobile: slight crop adjustment so the densest
-   particle cluster doesn't dominate the headline */
+.about-hero { background-image: url('../images/about-hero-bg.png'); }
+.faq-hero   { background-image: url('../images/faq-hero-bg.png'); }
+.shop-hero  { background-image: url('../images/shop-hero-bg.png'); }
+
+.about-hero::before,
+.faq-hero::before,
+.shop-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(rgba(5, 5, 8, 0.78), rgba(5, 5, 8, 0.78));
+    pointer-events: none;
+    z-index: 0;
+}
+
+.about-hero > *,
+.faq-hero > *,
+.shop-hero > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* Mobile: pin crop to the lit subject (always sitting in
+   the left third of each render) and give the banner enough
+   vertical room to read as a hero, not a strip. Slightly
+   stronger overlay since the image is more zoomed at this
+   width and headlines need to stay legible. */
 @media (max-width: 768px) {
     .about-hero,
     .faq-hero,
     .shop-hero {
-        background-position: 30% center, 30% center;
+        background-position: 22% center;
+        min-height: 340px;
+    }
+    .about-hero::before,
+    .faq-hero::before,
+    .shop-hero::before {
+        background: linear-gradient(rgba(5, 5, 8, 0.84), rgba(5, 5, 8, 0.84));
+    }
+    .about-standards {
+        background-position: 28% center;
+    }
+}
+@media (max-width: 480px) {
+    .about-hero,
+    .faq-hero,
+    .shop-hero {
+        background-position: 18% center;
+        min-height: 300px;
     }
 }
 

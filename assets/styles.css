@@ -144,6 +144,7 @@ button { font-family: inherit; cursor: pointer; }
     height: 100%;
     object-fit: cover;
     z-index: 1;
+    pointer-events: none;
 }
 
 .hero__overlay {
@@ -1365,8 +1366,9 @@ button { font-family: inherit; cursor: pointer; }
     transition: transform var(--dur-base) var(--ease-out);
     z-index: 70;
     padding: 88px 24px 24px;
+    pointer-events: none;
 }
-.mobile-nav--on { transform: translateY(0); }
+.mobile-nav--on { transform: translateY(0); pointer-events: auto; }
 .mobile-nav nav {
     display: flex;
     flex-direction: column;
@@ -1792,8 +1794,9 @@ body.cart-locked .hero__media { visibility: hidden; }
     z-index: 999;
     box-shadow: -16px 0 48px rgba(0, 0, 0, 0.5);
     will-change: transform;
+    pointer-events: none;
 }
-.cart-drawer--open { transform: translateX(0); }
+.cart-drawer--open { transform: translateX(0); pointer-events: auto; }
 
 /* Head */
 .cart-drawer__head {

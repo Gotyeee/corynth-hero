@@ -1256,8 +1256,8 @@ button { font-family: inherit; cursor: pointer; }
     gap: 16px;
 }
 .pdp-media__stage {
-    background: var(--c-ink-1);
-    border: 1px solid var(--border);
+    background: #bdc0c5;
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: var(--r-4);
     flex: 1 1 auto;
     min-height: 560px;
@@ -1270,7 +1270,7 @@ button { font-family: inherit; cursor: pointer; }
 .pdp-media__stage img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     box-sizing: border-box;
     position: relative;
     z-index: 1;

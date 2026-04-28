@@ -1,50 +1,50 @@
 /* ============================================================
    CORYNTH LABS — Product detail page interactions
-   - Dose selector (GLP-3 only)
+   - Vial-size selector (GLP-3 only)
    - Quantity stepper
    - Thumbnail active state
    Accordions use native <details>/<summary>, no JS needed.
    ============================================================ */
 (function () {
 
-    // --- Dose selector ------------------------------------------------------
-    var doseOpts = document.querySelectorAll('[data-dose-opt]');
-    if (doseOpts.length) {
+    // --- Vial-size selector -------------------------------------------------
+    var vialOpts = document.querySelectorAll('[data-vial-opt]');
+    if (vialOpts.length) {
         var cta       = document.querySelector('[data-cart-pdp]');
         var ctaPrice  = cta ? cta.querySelector('.pdp-cta__price') : null;
         var skuLabel  = document.getElementById('pdpSku');
         var mediaCode = document.querySelector('[data-media-code]');
         var mediaImg  = document.querySelector('[data-media-img]');
-        var specDose  = document.querySelector('[data-spec-dose]');
+        var specMass  = document.querySelector('[data-spec-mass]');
 
         function fmt(p) {
             return '$' + Number(p).toFixed(2);
         }
 
-        doseOpts.forEach(function (btn) {
+        vialOpts.forEach(function (btn) {
             btn.addEventListener('click', function () {
-                doseOpts.forEach(function (b) { b.classList.remove('pdp-option--active'); });
+                vialOpts.forEach(function (b) { b.classList.remove('pdp-option--active'); });
                 btn.classList.add('pdp-option--active');
 
                 var price = btn.dataset.price;
                 var sku   = btn.dataset.sku;
                 var code  = btn.dataset.code;
                 var img   = btn.dataset.image;
-                var dose  = btn.dataset.dose;
+                var mass  = btn.dataset.mass;
 
                 if (ctaPrice) ctaPrice.textContent = fmt(price);
                 if (cta) {
                     cta.dataset.price = price;
                     cta.dataset.code  = code;
-                    cta.dataset.dose  = dose + ' mg';
+                    cta.dataset.mass  = mass + ' mg';
                     cta.dataset.image = img;
-                    cta.dataset.id    = 'retatrutide-' + dose + 'mg';
-                    cta.dataset.name  = 'Retatrutide ' + dose + 'mg';
+                    cta.dataset.id    = 'retatrutide-' + mass + 'mg';
+                    cta.dataset.name  = 'Retatrutide ' + mass + 'mg';
                 }
                 if (skuLabel)  skuLabel.textContent = 'SKU · ' + sku;
                 if (mediaCode) mediaCode.textContent = code;
                 if (mediaImg)  mediaImg.src = img;
-                if (specDose)  specDose.textContent = dose + ' mg';
+                if (specMass)  specMass.textContent = mass + ' mg';
             });
         });
     }

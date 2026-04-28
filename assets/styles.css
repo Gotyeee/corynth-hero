@@ -2030,7 +2030,7 @@ body.cart-locked .hero__media { visibility: hidden; }
     gap: 2px;
     min-width: 0;
 }
-.cart-item__dose {
+.cart-item__vial-size {
     font-family: var(--font-mono);
     font-size: 10px;
     color: var(--fg-muted);

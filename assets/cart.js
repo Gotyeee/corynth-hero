@@ -106,7 +106,7 @@
         id:    item.id,
         name:  item.name,
         code:  item.code  || '',
-        dose:  item.dose  || '',
+        vialSize: item.vialSize || '',
         price: Number(item.price) || 0,
         qty:   item.qty   || 1,
         image: item.image || ''
@@ -311,13 +311,13 @@
     var img = it.image
       ? '<img src="' + escAttr(it.image) + '" alt="">'
       : '<span class="cart-item__code">' + esc(it.code || it.name) + '</span>';
-    var dose = it.dose ? '<span class="cart-item__dose">' + esc(it.dose) + '</span>' : '';
+    var vialSize = it.vialSize ? '<span class="cart-item__vial-size">' + esc(it.vialSize) + '</span>' : '';
     return '' +
       '<li class="cart-item" data-id="' + escAttr(it.id) + '">' +
         '<div class="cart-item__thumb">' + img + '</div>' +
         '<div class="cart-item__body">' +
           '<div class="cart-item__top">' +
-            '<div class="cart-item__name">' + esc(it.name) + dose + '</div>' +
+            '<div class="cart-item__name">' + esc(it.name) + vialSize + '</div>' +
             '<button class="cart-item__remove" data-act="remove" aria-label="Remove">×</button>' +
           '</div>' +
           '<div class="cart-item__bot">' +
@@ -503,8 +503,8 @@
     });
   }
 
-  /* For PDP: button is wired via data-cart-add but reads price/dose
-     from the active dose option so the dose selector "just works". */
+  /* For PDP: button is wired via data-cart-add but reads price/vial-size
+     from the active vial-size option so the selector "just works". */
   function readAddTarget(btn) {
     if (btn.hasAttribute('data-cart-pdp')) {
       var info = readPdpActive();
@@ -515,7 +515,7 @@
         id:    info.id,
         name:  info.name,
         code:  info.code,
-        dose:  info.dose,
+        vialSize: info.vialSize,
         price: info.price,
         qty:   qty,
         image: info.image
@@ -525,7 +525,7 @@
       id:    btn.getAttribute('data-id') || btn.getAttribute('data-name'),
       name:  btn.getAttribute('data-name') || '',
       code:  btn.getAttribute('data-code') || '',
-      dose:  btn.getAttribute('data-dose') || '',
+      vialSize: btn.getAttribute('data-vial-size') || btn.getAttribute('data-mass') || '',
       price: parseFloat(btn.getAttribute('data-price')) || 0,
       qty:   parseInt(btn.getAttribute('data-qty'), 10) || 1,
       image: btn.getAttribute('data-image') || ''
@@ -538,22 +538,22 @@
     var img = document.querySelector('.pdp-media__stage img');
     var active = document.querySelector('.pdp-option--active');
     if (!title || !active) return null;
-    var dose = active.querySelector('.pdp-option__name');
+    var vial = active.querySelector('.pdp-option__name');
     var priceEl = active.querySelector('.pdp-option__price');
     var price = priceEl ? parseFloat(priceEl.textContent.replace(/[^0-9.]/g, '')) : 0;
-    var doseTxt = dose ? dose.textContent.trim() : '';
+    var vialTxt = vial ? vial.textContent.trim() : '';
     var name = (eyebrow ? eyebrow.textContent.trim() : title.textContent.trim());
     return {
-      id:   (name + ' ' + doseTxt).toLowerCase().replace(/\s+/g, '-'),
+      id:   (name + ' ' + vialTxt).toLowerCase().replace(/\s+/g, '-'),
       name: name,
-      code: title.textContent.trim() + (doseTxt ? ' · ' + doseTxt.toUpperCase() : ''),
-      dose: doseTxt,
+      code: title.textContent.trim() + (vialTxt ? ' · ' + vialTxt.toUpperCase() : ''),
+      vialSize: vialTxt,
       price: price,
       image: img ? img.getAttribute('src') : ''
     };
   }
 
-  /* CTA price = active dose unit price × current qty */
+  /* CTA price = active vial unit price × current qty */
   function updatePdpCtaPrice() {
     var input = document.querySelector('.pdp-qty__input');
     var active = document.querySelector('.pdp-option--active') ||
@@ -566,7 +566,7 @@
     cta.textContent = '$' + (unit * qty).toFixed(2);
   }
 
-  /* PDP dose selector — reflect price into Add to Cart label */
+  /* PDP vial-size selector — reflect price into Add to Cart label */
   function wirePdpOptions() {
     var opts = $$('.pdp-option');
     if (opts.length === 0) return;
@@ -608,7 +608,7 @@
     });
   }
 
-  /* Public so product-data.js can refresh after a variant swap */
+  /* Public so other scripts can refresh after a variant swap */
   window.CorynthPdp = { refreshCtaPrice: updatePdpCtaPrice };
 
   /* Expose for product cards on index — clicking a card adds the item. */

@@ -1387,6 +1387,14 @@ button { font-family: inherit; cursor: pointer; }
 .mobile-nav nav a:last-child { border-bottom: 0; }
 body.nav-locked { overflow: hidden; }
 
+/* Pre-launch: hide search / account / cart icons site-wide.
+   Account: guest-checkout only, no auth at launch.
+   Search: not implemented at launch.
+   Cart: commerce plugin will own cart + checkout at launch. */
+.icon-btn--search,
+.site-header__auth .icon-btn[aria-label="Account"],
+.icon-btn--cart { display: none !important; }
+
 @media (max-width: 1024px) {
     :root { --container-pad: 28px; }
 
@@ -2376,11 +2384,26 @@ body.cart-locked .hero__media { visibility: hidden; }
 .shop-body { background: var(--c-ink-0); }
 
 .shop-hero {
-    background: var(--c-ink-0);
+    position: relative;
+    background-color: var(--c-ink-0);
+    background-image: url('../images/shop-hero-bg.jpg');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
     padding-top: 140px;
     padding-bottom: 80px;
     border-bottom: 1px solid var(--c-line);
+    overflow: hidden;
 }
+.shop-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(rgba(5, 5, 8, 0.78), rgba(5, 5, 8, 0.78));
+    pointer-events: none;
+    z-index: 0;
+}
+.shop-hero > * { position: relative; z-index: 1; }
 .shop-hero .container {
     min-height: 220px;
     display: flex;
@@ -2702,7 +2725,7 @@ body.cart-locked .hero__media { visibility: hidden; }
     padding: 160px 0 80px;
     border-bottom: 1px solid var(--c-line);
     background-color: var(--c-ink-0);
-    background-image: url('../images/coa-hero-bg.png');
+    background-image: url('../images/coa-hero-bg.jpg');
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
@@ -3040,6 +3063,24 @@ body.cart-locked .hero__media { visibility: hidden; }
     display: flex;
     align-items: center;
 }
+.about-body .about-hero {
+    position: relative;
+    background-color: var(--c-ink-0);
+    background-image: url('../images/about-hero-bg.jpg');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    overflow: hidden;
+}
+.about-body .about-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(rgba(5, 5, 8, 0.78), rgba(5, 5, 8, 0.78));
+    pointer-events: none;
+    z-index: 0;
+}
+.about-body .about-hero > * { position: relative; z-index: 1; }
 .about-hero__inner {
     max-width: 1400px;
     margin: 0 auto;
@@ -3264,13 +3305,28 @@ body.cart-locked .hero__media { visibility: hidden; }
    FAQ PAGE
    ============================================================ */
 .faq-hero {
+    position: relative;
     min-height: 400px;
     padding: 160px 0 72px;
-    background: var(--c-ink-0);
+    background-color: var(--c-ink-0);
+    background-image: url('../images/faq-hero-bg.jpg');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
     border-bottom: 1px solid var(--c-line);
     display: flex;
     align-items: center;
+    overflow: hidden;
 }
+.faq-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(rgba(5, 5, 8, 0.78), rgba(5, 5, 8, 0.78));
+    pointer-events: none;
+    z-index: 0;
+}
+.faq-hero > * { position: relative; z-index: 1; }
 .faq-hero__inner {
     max-width: 1400px;
     margin: 0 auto;
@@ -3470,22 +3526,39 @@ body.cart-locked .hero__media { visibility: hidden; }
    the About and FAQ pages.
    ============================================ */
 
-.about-hero,
-.faq-hero,
+/* Per-page hero banners. Each page gets its own backdrop with the same
+   dark-overlay treatment as the COA hero (handled via ::before in the
+   hero's own block earlier in the file). About is scoped to .about-body
+   so the legal pages (which share .about-hero markup) keep a flat bg. */
 .shop-hero {
-    position: relative;
     background-image:
         linear-gradient(180deg, rgba(0, 0, 0, 0.30) 0%, rgba(0, 0, 0, 0.60) 100%),
-        url('./corynth-graphite-mist-A-2560x1440.webp');
+        url('../images/shop-hero-bg.jpg');
+    background-size: cover, cover;
+    background-position: center center, center center;
+    background-repeat: no-repeat, no-repeat;
+}
+.about-body .about-hero {
+    background-image:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.30) 0%, rgba(0, 0, 0, 0.60) 100%),
+        url('../images/about-hero-bg.jpg');
+    background-size: cover, cover;
+    background-position: center center, center center;
+    background-repeat: no-repeat, no-repeat;
+}
+.faq-hero {
+    background-image:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.30) 0%, rgba(0, 0, 0, 0.60) 100%),
+        url('../images/faq-hero-bg.jpg');
     background-size: cover, cover;
     background-position: center center, center center;
     background-repeat: no-repeat, no-repeat;
 }
 
-/* Mobile: slight crop adjustment so the densest
-   particle cluster doesn't dominate the headline */
+/* Mobile: slight crop adjustment so the focal subject
+   doesn't sit dead-center under the headline */
 @media (max-width: 768px) {
-    .about-hero,
+    .about-body .about-hero,
     .faq-hero,
     .shop-hero {
         background-position: 30% center, 30% center;

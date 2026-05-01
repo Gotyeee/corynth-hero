@@ -16,6 +16,11 @@
   var PROMO_KEY    = 'corynth.cart.promo';
   var FREE_SHIP_AT = 200;
 
+  /* Backend: payment-create endpoint on the Cloudflare Worker.
+     Set window.CORYNTH_PAY_ENDPOINT in HTML to override (e.g. for staging). */
+  var PAY_ENDPOINT = (window.CORYNTH_PAY_ENDPOINT ||
+    'https://corynth-webhooks.inherentbirdq.workers.dev') + '/create-invoice';
+
   /* Bulk tiers — crypto only. Threshold met by EITHER subtotal OR item count. */
   var TIERS = [
     { pct: 0.25, minSubtotal: 800, minItems: Infinity, label: '25% off' },
@@ -457,15 +462,17 @@
       }
     });
 
-    /* checkout — placeholder */
+    /* checkout — opens the email/shipping modal, then hands off to Plisio. */
     $checkoutBtn.addEventListener('click', function () {
       if (state.items.length === 0) return;
-      /* Integration point: hand off to crypto or card processor based on state.rail. */
-      window.alert(
-        'Checkout via ' + (state.rail === 'crypto' ? 'Crypto' : 'Card') +
-        '\nTotal: ' + $totalEl.textContent +
-        '\n\n(Processor integration goes here.)'
-      );
+      if (state.rail === 'card') {
+        window.alert(
+          'Card checkout is not live yet.\n' +
+          'Switch to crypto for the launch discount, or check back in a few weeks.'
+        );
+        return;
+      }
+      openCheckoutModal();
     });
 
     /* open buttons — any element with [data-cart-open] or .icon-btn[aria-label="Cart"] */
@@ -619,6 +626,140 @@
     setRail: setRail,
     state:  state
   };
+
+  /* ---------- checkout modal (email + shipping → Plisio invoice) ---------- */
+  var $coModal, $coBackdrop, $coForm, $coEmail, $coShip, $coSubmit, $coError, $coSummary;
+
+  function ensureCheckoutModal() {
+    if ($coModal) return;
+    var wrap = document.createElement('div');
+    wrap.innerHTML =
+      '<div class="co-backdrop" id="coBackdrop" hidden></div>' +
+      '<div class="co-modal" id="coModal" role="dialog" aria-modal="true" aria-labelledby="coTitle" hidden>' +
+        '<div class="co-modal__card">' +
+          '<button type="button" class="co-modal__close" aria-label="Close">×</button>' +
+          '<h2 id="coTitle" class="co-modal__title">Checkout</h2>' +
+          '<p class="co-modal__sub">Pay with crypto via Plisio. We email a batch-matched COA after payment confirms.</p>' +
+          '<dl class="co-modal__summary" id="coSummary"></dl>' +
+          '<form class="co-modal__form" id="coForm" novalidate>' +
+            '<label class="co-field">' +
+              '<span class="co-field__label">Email</span>' +
+              '<input id="coEmail" type="email" required autocomplete="email" inputmode="email" placeholder="you@example.com">' +
+            '</label>' +
+            '<label class="co-field">' +
+              '<span class="co-field__label">Shipping address</span>' +
+              '<textarea id="coShip" required rows="4" autocomplete="shipping street-address" placeholder="Full name\nStreet address\nCity, State ZIP\nCountry"></textarea>' +
+            '</label>' +
+            '<p class="co-modal__error" id="coError" hidden></p>' +
+            '<button type="submit" class="co-modal__submit" id="coSubmit">Continue to crypto checkout →</button>' +
+            '<p class="co-modal__legal">For research use only. Not for human or veterinary use. By continuing you confirm you are a qualified researcher.</p>' +
+          '</form>' +
+        '</div>' +
+      '</div>';
+    while (wrap.firstChild) document.body.appendChild(wrap.firstChild);
+
+    $coBackdrop = document.getElementById('coBackdrop');
+    $coModal    = document.getElementById('coModal');
+    $coForm     = document.getElementById('coForm');
+    $coEmail    = document.getElementById('coEmail');
+    $coShip     = document.getElementById('coShip');
+    $coSubmit   = document.getElementById('coSubmit');
+    $coError    = document.getElementById('coError');
+    $coSummary  = document.getElementById('coSummary');
+
+    $coBackdrop.addEventListener('click', closeCheckoutModal);
+    $coModal.querySelector('.co-modal__close').addEventListener('click', closeCheckoutModal);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !$coModal.hidden) closeCheckoutModal();
+    });
+    $coForm.addEventListener('submit', submitCheckout);
+  }
+
+  function openCheckoutModal() {
+    ensureCheckoutModal();
+    var sub = subtotal();
+    var count = itemCount();
+    var disc = activeDiscount(sub, count);
+    var discAmt = sub * disc.pct;
+    var total = sub - discAmt;
+    var rows = '<div class="co-row"><dt>Subtotal</dt><dd>' + fmt(sub) + '</dd></div>';
+    if (disc.pct > 0) {
+      var lbl = disc.source === 'promo' ? 'Promo · FIRST10'
+              : 'Bulk · ' + Math.round(disc.pct * 100) + '% off';
+      rows += '<div class="co-row co-row--disc"><dt>' + lbl + '</dt><dd>−' + fmt(discAmt) + '</dd></div>';
+    }
+    rows += '<div class="co-row co-row--total"><dt>Total</dt><dd>' + fmt(total) + '</dd></div>';
+    $coSummary.innerHTML = rows;
+    $coError.hidden = true;
+    $coError.textContent = '';
+    $coSubmit.disabled = false;
+    $coSubmit.textContent = 'Continue to crypto checkout →';
+    $coBackdrop.hidden = false;
+    $coModal.hidden = false;
+    document.body.classList.add('cart-locked');
+    setTimeout(function () { $coEmail.focus(); }, 60);
+  }
+
+  function closeCheckoutModal() {
+    if (!$coModal) return;
+    $coModal.hidden = true;
+    $coBackdrop.hidden = true;
+    document.body.classList.remove('cart-locked');
+  }
+
+  function submitCheckout(e) {
+    e.preventDefault();
+    var email = ($coEmail.value || '').trim();
+    var ship  = ($coShip.value  || '').trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return showCoError('Please enter a valid email address.');
+    }
+    if (ship.length < 10) {
+      return showCoError('Please enter a complete shipping address.');
+    }
+    if (state.items.length === 0) {
+      return showCoError('Cart is empty.');
+    }
+    $coSubmit.disabled = true;
+    $coSubmit.textContent = 'Creating invoice…';
+
+    var payload = {
+      email:    email,
+      shipping: ship,
+      promo:    state.promo,
+      items:    state.items.map(function (it) {
+        return { id: it.id, qty: it.qty, dose: it.dose };
+      })
+    };
+
+    fetch(PAY_ENDPOINT, {
+      method:  'POST',
+      headers: { 'content-type': 'application/json' },
+      body:    JSON.stringify(payload)
+    }).then(function (r) {
+      return r.json().then(function (body) { return { ok: r.ok, body: body }; });
+    }).then(function (resp) {
+      if (!resp.ok || !resp.body || !resp.body.invoice_url) {
+        var msg = (resp.body && resp.body.error) || 'Could not create invoice.';
+        showCoError('Checkout failed: ' + msg + '. Email support@corynthlabs.com if this persists.');
+        $coSubmit.disabled = false;
+        $coSubmit.textContent = 'Try again';
+        return;
+      }
+      // Stash order id so the post-redirect "thanks" page can show it.
+      try { localStorage.setItem('corynth.lastOrder', resp.body.orderId); } catch (e2) {}
+      window.location.href = resp.body.invoice_url;
+    }).catch(function () {
+      showCoError('Network error. Check connection and try again.');
+      $coSubmit.disabled = false;
+      $coSubmit.textContent = 'Try again';
+    });
+  }
+
+  function showCoError(msg) {
+    $coError.hidden = false;
+    $coError.textContent = msg;
+  }
 
   document.addEventListener('DOMContentLoaded', function () {
     wireOnce();

@@ -628,7 +628,8 @@
   };
 
   /* ---------- checkout modal (email + shipping → Plisio invoice) ---------- */
-  var $coModal, $coBackdrop, $coForm, $coEmail, $coShip, $coSubmit, $coError, $coSummary;
+  var $coModal, $coBackdrop, $coForm, $coEmail, $coSubmit, $coError, $coSummary;
+  var $coName, $coAddr1, $coAddr2, $coCity, $coState, $coZip, $coCountry;
 
   function ensureCheckoutModal() {
     if ($coModal) return;
@@ -637,7 +638,7 @@
       '<div class="co-backdrop" id="coBackdrop" hidden></div>' +
       '<div class="co-modal" id="coModal" role="dialog" aria-modal="true" aria-labelledby="coTitle" hidden>' +
         '<div class="co-modal__card">' +
-          '<button type="button" class="co-modal__close" aria-label="Close">×</button>' +
+          '<button type="button" class="co-modal__close" data-co-close aria-label="Close">×</button>' +
           '<h2 id="coTitle" class="co-modal__title">Checkout</h2>' +
           '<p class="co-modal__sub">Pay with crypto via Plisio. We email a batch-matched COA after payment confirms.</p>' +
           '<dl class="co-modal__summary" id="coSummary"></dl>' +
@@ -646,12 +647,43 @@
               '<span class="co-field__label">Email</span>' +
               '<input id="coEmail" type="email" required autocomplete="email" inputmode="email" placeholder="you@example.com">' +
             '</label>' +
+
+            '<div class="co-section">Shipping address</div>' +
+
             '<label class="co-field">' +
-              '<span class="co-field__label">Shipping address</span>' +
-              '<textarea id="coShip" required rows="4" autocomplete="shipping street-address" placeholder="Full name\nStreet address\nCity, State ZIP\nCountry"></textarea>' +
+              '<span class="co-field__label">Full name</span>' +
+              '<input id="coName" type="text" required autocomplete="name" placeholder="Jane Researcher">' +
             '</label>' +
+            '<label class="co-field">' +
+              '<span class="co-field__label">Street address</span>' +
+              '<input id="coAddr1" type="text" required autocomplete="address-line1" placeholder="123 Main St">' +
+            '</label>' +
+            '<label class="co-field">' +
+              '<span class="co-field__label">Apartment, suite, etc. <em>(optional)</em></span>' +
+              '<input id="coAddr2" type="text" autocomplete="address-line2" placeholder="Apt 4B">' +
+            '</label>' +
+            '<label class="co-field">' +
+              '<span class="co-field__label">City</span>' +
+              '<input id="coCity" type="text" required autocomplete="address-level2" placeholder="Austin">' +
+            '</label>' +
+            '<div class="co-row-2">' +
+              '<label class="co-field">' +
+                '<span class="co-field__label">State / Region</span>' +
+                '<input id="coState" type="text" required autocomplete="address-level1" placeholder="TX">' +
+              '</label>' +
+              '<label class="co-field">' +
+                '<span class="co-field__label">ZIP / Postal</span>' +
+                '<input id="coZip" type="text" required autocomplete="postal-code" inputmode="numeric" placeholder="78701">' +
+              '</label>' +
+            '</div>' +
+            '<label class="co-field">' +
+              '<span class="co-field__label">Country</span>' +
+              '<input id="coCountry" type="text" required autocomplete="country-name" value="United States" placeholder="United States">' +
+            '</label>' +
+
             '<p class="co-modal__error" id="coError" hidden></p>' +
             '<button type="submit" class="co-modal__submit" id="coSubmit">Continue to crypto checkout →</button>' +
+            '<button type="button" class="co-modal__cancel" data-co-close>Cancel</button>' +
             '<p class="co-modal__legal">For research use only. Not for human or veterinary use. By continuing you confirm you are a qualified researcher.</p>' +
           '</form>' +
         '</div>' +
@@ -662,20 +694,46 @@
     $coModal    = document.getElementById('coModal');
     $coForm     = document.getElementById('coForm');
     $coEmail    = document.getElementById('coEmail');
-    $coShip     = document.getElementById('coShip');
+    $coName     = document.getElementById('coName');
+    $coAddr1    = document.getElementById('coAddr1');
+    $coAddr2    = document.getElementById('coAddr2');
+    $coCity     = document.getElementById('coCity');
+    $coState    = document.getElementById('coState');
+    $coZip      = document.getElementById('coZip');
+    $coCountry  = document.getElementById('coCountry');
     $coSubmit   = document.getElementById('coSubmit');
     $coError    = document.getElementById('coError');
     $coSummary  = document.getElementById('coSummary');
 
+    /* Capture-phase delegation — fires before any inner handler can stop it.
+       Any element with [data-co-close] (X button or Cancel) closes the modal. */
+    document.addEventListener('click', function (e) {
+      if ($coModal.hidden) return;
+      var t = e.target;
+      while (t && t !== document) {
+        if (t.hasAttribute && t.hasAttribute('data-co-close')) {
+          e.preventDefault();
+          e.stopPropagation();
+          closeCheckoutModal();
+          return;
+        }
+        t = t.parentNode;
+      }
+    }, true);
     $coBackdrop.addEventListener('click', closeCheckoutModal);
-    $coModal.querySelector('.co-modal__close').addEventListener('click', closeCheckoutModal);
+    /* Click on the dimmed area outside the card also closes. */
+    $coModal.addEventListener('click', function (e) {
+      if (e.target === $coModal) closeCheckoutModal();
+    });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && !$coModal.hidden) closeCheckoutModal();
-    });
+    }, true);
     $coForm.addEventListener('submit', submitCheckout);
   }
 
   function openCheckoutModal() {
+    /* Close the cart drawer first so the checkout has the screen to itself. */
+    close();
     ensureCheckoutModal();
     var sub = subtotal();
     var count = itemCount();
@@ -709,17 +767,29 @@
 
   function submitCheckout(e) {
     e.preventDefault();
-    var email = ($coEmail.value || '').trim();
-    var ship  = ($coShip.value  || '').trim();
+    var email   = ($coEmail.value   || '').trim();
+    var name    = ($coName.value    || '').trim();
+    var addr1   = ($coAddr1.value   || '').trim();
+    var addr2   = ($coAddr2.value   || '').trim();
+    var city    = ($coCity.value    || '').trim();
+    var stateV  = ($coState.value   || '').trim();
+    var zip     = ($coZip.value     || '').trim();
+    var country = ($coCountry.value || '').trim();
+
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return showCoError('Please enter a valid email address.');
     }
-    if (ship.length < 10) {
-      return showCoError('Please enter a complete shipping address.');
+    if (!name || !addr1 || !city || !stateV || !zip || !country) {
+      return showCoError('Please complete every shipping field.');
     }
     if (state.items.length === 0) {
       return showCoError('Cart is empty.');
     }
+
+    var ship = name + '\n' + addr1 +
+      (addr2 ? '\n' + addr2 : '') +
+      '\n' + city + ', ' + stateV + ' ' + zip +
+      '\n' + country;
     $coSubmit.disabled = true;
     $coSubmit.textContent = 'Creating invoice…';
 

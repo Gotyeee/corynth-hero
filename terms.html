@@ -4,13 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Terms of Service — Corynth Labs</title>
-    <link rel="stylesheet" href="./assets/colors_and_type.css?v=20260502-031413">
-    <link rel="stylesheet" href="./assets/styles.css?v=20260502-031413">
+    <link rel="stylesheet" href="./assets/colors_and_type.css?v=20260502-043023">
+    <link rel="stylesheet" href="./assets/styles.css?v=20260502-043023">
 </head>
 <body class="legal-body content-body">
 
     <div class="mobile-nav-backdrop" id="mobileNavBackdrop" aria-hidden="true"></div>
     <aside class="mobile-nav" id="mobileNav" aria-hidden="true">
+        <button class="mobile-nav__close" type="button" aria-label="Close menu" data-mobile-nav-close>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+        </button>
         <nav aria-label="Mobile primary">
             <a href="shop.html">Catalog</a>
             <a href="about.html">About</a>
@@ -211,9 +214,9 @@
     </aside>
 
     <script>
-        (function(){var t=document.querySelector('[data-mobile-nav-toggle]'),n=document.getElementById('mobileNav'),b=document.getElementById('mobileNavBackdrop');if(!t||!n||!b)return;function o(){n.classList.add('mobile-nav--on');b.classList.add('mobile-nav-backdrop--on');n.setAttribute('aria-hidden','false');t.setAttribute('aria-expanded','true');document.body.classList.add('nav-locked');}function c(){n.classList.remove('mobile-nav--on');b.classList.remove('mobile-nav-backdrop--on');n.setAttribute('aria-hidden','true');t.setAttribute('aria-expanded','false');document.body.classList.remove('nav-locked');}t.addEventListener('click',function(){n.classList.contains('mobile-nav--on')?c():o();});b.addEventListener('click',c);n.addEventListener('click',function(e){if(e.target.tagName==='A')c();});document.addEventListener('keydown',function(e){if(e.key==='Escape'&&n.classList.contains('mobile-nav--on'))c();});})();
+        (function(){var t=document.querySelector('[data-mobile-nav-toggle]'),n=document.getElementById('mobileNav'),b=document.getElementById('mobileNavBackdrop');if(!t||!n||!b)return;function o(){n.classList.add('mobile-nav--on');b.classList.add('mobile-nav-backdrop--on');n.setAttribute('aria-hidden','false');t.setAttribute('aria-expanded','true');document.body.classList.add('nav-locked');}function c(){n.classList.remove('mobile-nav--on');b.classList.remove('mobile-nav-backdrop--on');n.setAttribute('aria-hidden','true');t.setAttribute('aria-expanded','false');document.body.classList.remove('nav-locked');}t.addEventListener('click',function(){n.classList.contains('mobile-nav--on')?c():o();});var x=document.querySelector('[data-mobile-nav-close]');if(x)x.addEventListener('click',c);b.addEventListener('click',c);n.addEventListener('click',function(e){if(!e.target.closest('button'))c();});document.addEventListener('keydown',function(e){if(e.key==='Escape'&&n.classList.contains('mobile-nav--on'))c();});})();
     </script>
-    <script src="./assets/cart.js?v=20260502-031413"></script>
+    <script src="./assets/cart.js?v=20260502-043023"></script>
 
 </body>
 </html>

@@ -3657,7 +3657,20 @@ html, body {
     inset: 0;
     background: #2a2a2a;
     z-index: 1100;
+    /* Defense-in-depth: even if display is overridden, these block visibility
+       and clicks so a stuck backdrop can never trap the page. */
+    pointer-events: none;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 150ms ease;
 }
+.co-backdrop:not([hidden]) {
+    pointer-events: auto;
+    visibility: visible;
+    opacity: 1;
+}
+.co-backdrop[hidden] { display: none; }
+
 .co-modal {
     position: fixed;
     inset: 0;
@@ -3666,7 +3679,21 @@ html, body {
     place-items: start center;
     padding: 32px 24px;
     overflow-y: auto;
+    /* Defense-in-depth — see .co-backdrop note. The historical bug was
+       `display: grid` here beating UA `[hidden] { display: none }` and
+       leaving the modal covering the viewport with pointer-events: auto
+       after "close." */
+    pointer-events: none;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 150ms ease;
 }
+.co-modal:not([hidden]) {
+    pointer-events: auto;
+    visibility: visible;
+    opacity: 1;
+}
+.co-modal[hidden] { display: none; }
 .co-modal__card {
     width: 100%;
     max-width: 480px;
@@ -3795,6 +3822,10 @@ html, body {
     color: #ff8888;
     font-size: 13px;
     line-height: 1.4;
+}
+.co-field__input--error {
+    border-color: rgba(220, 70, 70, 0.7) !important;
+    box-shadow: 0 0 0 2px rgba(220, 70, 70, 0.18) !important;
 }
 .co-modal__submit {
     width: 100%;

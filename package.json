@@ -1,0 +1,8 @@
+{
+  "name": "corynth-site",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "deploy": "node deploy.js"
+  }
+}

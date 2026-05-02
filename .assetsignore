@@ -1,0 +1,10 @@
+.claude/
+.git/
+*.log
+.DS_Store
+wrangler.toml
+.assetsignore
+package.json
+package-lock.json
+node_modules/
+deploy.js

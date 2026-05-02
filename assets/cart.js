@@ -11,7 +11,10 @@
 (function () {
   'use strict';
 
-  var STORAGE_KEY  = 'corynth.cart.v1';
+  // Bump this when item shape or IDs change — auto-clears stale carts.
+  var STORAGE_KEY  = 'corynth.cart.v2';
+  // Drop the old v1 key so it doesn't sit forever in users' localStorage.
+  try { localStorage.removeItem('corynth.cart.v1'); } catch (e) {}
   var RAIL_KEY     = 'corynth.cart.rail';
   var PROMO_KEY    = 'corynth.cart.promo';
   var FREE_SHIP_AT = 200;
@@ -19,7 +22,7 @@
   /* Backend: payment-create endpoint on the Cloudflare Worker.
      Set window.CORYNTH_PAY_ENDPOINT in HTML to override (e.g. for staging). */
   var PAY_ENDPOINT = (window.CORYNTH_PAY_ENDPOINT ||
-    'https://corynth-webhooks.inherentbirdq.workers.dev') + '/create-invoice';
+    'https://api.corynthlabs.com') + '/create-invoice';
 
   /* Bulk tiers — crypto only. Threshold met by EITHER subtotal OR item count. */
   var TIERS = [
@@ -381,7 +384,14 @@
   }
   function resumeHeroVideo() {
     var v = document.querySelector('.hero__media');
-    if (v && typeof v.play === 'function') { try { v.play(); } catch (e) {} }
+    if (!v || typeof v.play !== 'function') return;
+    /* play() returns a promise that rejects with AbortError when a pause()
+       interrupts an in-flight play. Swallow it — uncaught promise rejections
+       were spamming the console during open/close cycles. */
+    try {
+      var p = v.play();
+      if (p && typeof p.catch === 'function') p.catch(function () {});
+    } catch (e) {}
   }
   function open() {
     if (!$drawer) return;
@@ -510,16 +520,34 @@
     });
   }
 
-  /* For PDP: button is wired via data-cart-add but reads price/dose
-     from the active dose option so the dose selector "just works". */
+  /* For PDP: button is wired via data-cart-add. Prefer the button's own
+     data-* attributes — those are the source of truth (set in HTML, kept in
+     sync by product.js when the dose selector flips). Fall back to scraping
+     the active .pdp-option only if the button is missing fields. */
   function readAddTarget(btn) {
     if (btn.hasAttribute('data-cart-pdp')) {
-      var info = readPdpActive();
-      if (!info) return null;
       var qtyInput = document.querySelector('.pdp-qty__input');
       var qty = qtyInput ? Math.max(1, parseInt(qtyInput.value, 10) || 1) : 1;
+      var btnId    = btn.getAttribute('data-id');
+      var btnPrice = parseFloat(btn.getAttribute('data-price'));
+      // If the button has the essentials (id + price), trust it completely.
+      if (btnId && btnPrice > 0) {
+        return {
+          id:    btnId,
+          name:  btn.getAttribute('data-name')  || '',
+          code:  btn.getAttribute('data-code')  || '',
+          dose:  btn.getAttribute('data-dose')  || '',
+          price: btnPrice,
+          qty:   qty,
+          image: btn.getAttribute('data-image') || ''
+        };
+      }
+      // Fallback: scrape from the dose selector (legacy path, still used if
+      // a PDP variant lacks button data-* attrs).
+      var info = readPdpActive();
+      if (!info) return null;
       return {
-        id:    info.id,
+        id:    btnId || info.id,
         name:  info.name,
         code:  info.code,
         dose:  info.dose,
@@ -629,7 +657,8 @@
 
   /* ---------- checkout modal (email + shipping → Plisio invoice) ---------- */
   var $coModal, $coBackdrop, $coForm, $coEmail, $coSubmit, $coError, $coSummary;
-  var $coName, $coAddr1, $coAddr2, $coCity, $coState, $coZip, $coCountry;
+  var $coName, $coAddr1, $coAddr2, $coCity, $coState, $coZip, $coCountry, $coNotes;
+  var SHIP_DRAFT_KEY = 'corynth.ship.v1';
 
   function ensureCheckoutModal() {
     if ($coModal) return;
@@ -680,6 +709,10 @@
               '<span class="co-field__label">Country</span>' +
               '<input id="coCountry" type="text" required autocomplete="country-name" value="United States" placeholder="United States">' +
             '</label>' +
+            '<label class="co-field">' +
+              '<span class="co-field__label">Delivery notes <em>(optional)</em></span>' +
+              '<textarea id="coNotes" rows="2" maxlength="300" placeholder="Gate code, building access, leave at side door, etc."></textarea>' +
+            '</label>' +
 
             '<p class="co-modal__error" id="coError" hidden></p>' +
             '<button type="submit" class="co-modal__submit" id="coSubmit">Continue to crypto checkout →</button>' +
@@ -701,6 +734,7 @@
     $coState    = document.getElementById('coState');
     $coZip      = document.getElementById('coZip');
     $coCountry  = document.getElementById('coCountry');
+    $coNotes    = document.getElementById('coNotes');
     $coSubmit   = document.getElementById('coSubmit');
     $coError    = document.getElementById('coError');
     $coSummary  = document.getElementById('coSummary');
@@ -729,6 +763,14 @@
       if (e.key === 'Escape' && !$coModal.hidden) closeCheckoutModal();
     }, true);
     $coForm.addEventListener('submit', submitCheckout);
+
+    // Clear field-error highlight as soon as the user types in that field.
+    [$coEmail, $coName, $coAddr1, $coCity, $coState, $coZip, $coCountry].forEach(function (el) {
+      if (!el) return;
+      el.addEventListener('input', function () {
+        el.classList.remove('co-field__input--error');
+      });
+    });
   }
 
   function openCheckoutModal() {
@@ -752,16 +794,40 @@
     $coError.textContent = '';
     $coSubmit.disabled = false;
     $coSubmit.textContent = 'Continue to crypto checkout →';
+    // Prefill name/address from a previous order if present. Email is left
+    // empty deliberately — different orders may use different inboxes.
+    try {
+      var saved = JSON.parse(localStorage.getItem(SHIP_DRAFT_KEY) || 'null');
+      if (saved) {
+        if (saved.name    && !$coName.value)    $coName.value    = saved.name;
+        if (saved.addr1   && !$coAddr1.value)   $coAddr1.value   = saved.addr1;
+        if (saved.addr2   && !$coAddr2.value)   $coAddr2.value   = saved.addr2;
+        if (saved.city    && !$coCity.value)    $coCity.value    = saved.city;
+        if (saved.state   && !$coState.value)   $coState.value   = saved.state;
+        if (saved.zip     && !$coZip.value)     $coZip.value     = saved.zip;
+        if (saved.country)                      $coCountry.value = saved.country;
+      }
+    } catch (e) {}
+
     $coBackdrop.hidden = false;
     $coModal.hidden = false;
+    /* Belt-and-suspenders: clear any inline pointer-events that closeCheckoutModal
+       set, in case the user reopens after closing. */
+    $coModal.style.removeProperty('pointer-events');
+    $coBackdrop.style.removeProperty('pointer-events');
     document.body.classList.add('cart-locked');
-    setTimeout(function () { $coEmail.focus(); }, 60);
+    // If we prefilled the name, jump to email so they don't retype the easy stuff.
+    setTimeout(function () { try { $coEmail.focus(); } catch (e) {} }, 60);
   }
 
   function closeCheckoutModal() {
     if (!$coModal) return;
     $coModal.hidden = true;
     $coBackdrop.hidden = true;
+    /* Forcibly drop pointer interactivity in case a future stylesheet
+       regression ever lets the modal stay laid out. Cleared in open(). */
+    $coModal.style.pointerEvents = 'none';
+    $coBackdrop.style.pointerEvents = 'none';
     document.body.classList.remove('cart-locked');
   }
 
@@ -775,21 +841,61 @@
     var stateV  = ($coState.value   || '').trim();
     var zip     = ($coZip.value     || '').trim();
     var country = ($coCountry.value || '').trim();
+    var notes   = ($coNotes && $coNotes.value || '').trim();
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return showCoError('Please enter a valid email address.');
+    // Clear previous field-level errors
+    [$coEmail, $coName, $coAddr1, $coCity, $coState, $coZip, $coCountry].forEach(function (el) {
+      if (el) el.classList.remove('co-field__input--error');
+    });
+
+    var emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    var missing = [];
+    if (!emailValid)  { missing.push({ el: $coEmail,   label: 'a valid email address' }); }
+    if (!name)        { missing.push({ el: $coName,    label: 'Full name' }); }
+    if (!addr1)       { missing.push({ el: $coAddr1,   label: 'Street address' }); }
+    if (!city)        { missing.push({ el: $coCity,    label: 'City' }); }
+    if (!stateV)      { missing.push({ el: $coState,   label: 'State / Region' }); }
+    if (!zip)         { missing.push({ el: $coZip,     label: 'ZIP / Postal' }); }
+    if (!country)     { missing.push({ el: $coCountry, label: 'Country' }); }
+
+    if (missing.length) {
+      missing.forEach(function (m) { m.el.classList.add('co-field__input--error'); });
+      var labels = missing.map(function (m) { return m.label; });
+      var msg = labels.length === 1
+        ? (labels[0] === 'a valid email address' ? 'Please enter a valid email address.' : 'Missing: ' + labels[0] + '.')
+        : 'Please complete: ' + labels.join(', ') + '.';
+      showCoError(msg);
+      try { missing[0].el.focus(); } catch (e) {}
+      return;
     }
-    if (!name || !addr1 || !city || !stateV || !zip || !country) {
-      return showCoError('Please complete every shipping field.');
+
+    // ZIP format check — only enforced for US addresses (5 digits, optional -4).
+    if (/^(united states|usa|us|u\.s\.a?\.?)$/i.test(country) && !/^\d{5}(-\d{4})?$/.test(zip)) {
+      $coZip.classList.add('co-field__input--error');
+      showCoError('US ZIP must be 5 digits (or ZIP+4 like 78701-1234).');
+      try { $coZip.focus(); } catch (e) {}
+      return;
     }
     if (state.items.length === 0) {
       return showCoError('Cart is empty.');
+    }
+    if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+      return showCoError('Insecure connection. Please reload the site over HTTPS before checking out.');
     }
 
     var ship = name + '\n' + addr1 +
       (addr2 ? '\n' + addr2 : '') +
       '\n' + city + ', ' + stateV + ' ' + zip +
-      '\n' + country;
+      '\n' + country +
+      (notes ? '\n\nNotes: ' + notes : '');
+
+    // Save the address (no email, no notes) for prefill on the next visit.
+    try {
+      localStorage.setItem(SHIP_DRAFT_KEY, JSON.stringify({
+        name: name, addr1: addr1, addr2: addr2, city: city,
+        state: stateV, zip: zip, country: country
+      }));
+    } catch (e) {}
     $coSubmit.disabled = true;
     $coSubmit.textContent = 'Creating invoice…';
 
@@ -812,6 +918,14 @@
       if (!resp.ok || !resp.body || !resp.body.invoice_url) {
         var msg = (resp.body && resp.body.error) || 'Could not create invoice.';
         showCoError('Checkout failed: ' + msg + '. Email support@corynthlabs.com if this persists.');
+        $coSubmit.disabled = false;
+        $coSubmit.textContent = 'Try again';
+        return;
+      }
+      // Whitelist the redirect — only Plisio invoice hosts are allowed,
+      // so a compromised/MITM'd Worker response can't bounce users off-site.
+      if (!/^https:\/\/([a-z0-9-]+\.)?plisio\.net\//i.test(resp.body.invoice_url)) {
+        showCoError('Checkout failed: invalid payment URL. Email support@corynthlabs.com.');
         $coSubmit.disabled = false;
         $coSubmit.textContent = 'Try again';
         return;

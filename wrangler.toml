@@ -1,0 +1,6 @@
+name = "corynthlabs"
+compatibility_date = "2024-09-25"
+preview_urls = false
+
+[assets]
+directory = "./"

@@ -1812,8 +1812,13 @@ body.cart-locked { overflow: hidden; }
     inset: 0;
     background: rgba(0, 0, 0, 0.82);
     opacity: 0;
+    /* Defense-in-depth — see .co-modal / .mobile-nav notes. iOS Safari can
+       capture taps on transform-only-hidden fixed elements at the edge they
+       translated past, so visibility + pointer-events both fail-shut. */
+    visibility: hidden;
     pointer-events: none;
-    transition: opacity var(--dur-base) var(--ease-out);
+    transition: opacity var(--dur-base) var(--ease-out),
+                visibility 0s linear var(--dur-base);
     z-index: 998;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
@@ -1823,7 +1828,10 @@ body.cart-locked { overflow: hidden; }
 body.cart-locked .hero__media { visibility: hidden; }
 .cart-backdrop--on {
     opacity: 1;
+    visibility: visible;
     pointer-events: auto;
+    transition: opacity var(--dur-base) var(--ease-out),
+                visibility 0s linear 0s;
 }
 
 /* Drawer panel */
@@ -1839,13 +1847,25 @@ body.cart-locked .hero__media { visibility: hidden; }
     display: grid;
     grid-template-rows: auto 1fr auto;
     transform: translateX(100%);
-    transition: transform var(--dur-slow) var(--ease-out);
+    transition: transform var(--dur-slow) var(--ease-out),
+                visibility 0s linear var(--dur-slow);
     z-index: 999;
     box-shadow: -16px 0 48px rgba(0, 0, 0, 0.5);
     will-change: transform;
+    /* Same defense-in-depth as .cart-backdrop above. On mobile this drawer is
+       width: 100vw, so its translateX(100%) lands its left edge exactly at the
+       viewport right — exactly where the burger button lives. WebKit's ghost-
+       capture quirk made the burger tap dead until we add visibility: hidden. */
+    visibility: hidden;
     pointer-events: none;
 }
-.cart-drawer--open { transform: translateX(0); pointer-events: auto; }
+.cart-drawer--open {
+    transform: translateX(0);
+    visibility: visible;
+    pointer-events: auto;
+    transition: transform var(--dur-slow) var(--ease-out),
+                visibility 0s linear 0s;
+}
 
 /* Head */
 .cart-drawer__head {

@@ -1474,18 +1474,18 @@ body.nav-locked { overflow: hidden; }
     }
     .icon-btn--search,
     .icon-btn[aria-label="Account"] { display: none; }
-    /* Extend the burger's hit area to the absolute top-right corner of the
-       viewport. Visually the button stays 44×44, but a transparent pseudo-
-       element captures taps in the entire dead zone above + to the right of
-       the button — what users naturally tap as "the corner" on a phone. */
-    .icon-btn--menu { position: relative; }
-    .icon-btn--menu::before {
-        content: "";
+    /* Burger lives flush in the top-right corner with a generous 60×60 hit
+       area — covers what users naturally tap as "the corner" on a phone.
+       Border removed so the larger tap area doesn't read as a giant box. */
+    .icon-btn--menu {
         position: fixed;
         top: 0;
         right: 0;
-        width: 80px;
+        width: 60px;
         height: 60px;
+        border: 0;
+        background: transparent;
+        z-index: 51;
     }
     .brand { font-size: 14px; gap: 8px; }
     .brand__mark { width: 16px; height: 16px; }
